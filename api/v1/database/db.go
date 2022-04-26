@@ -2,24 +2,30 @@ package database
 
 import (
 	"context"
-	"fmt"
 	"log"
+	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func ConnectDB() *mongo.Client {
-	uri:="mongodb://localhost:27017/user"
-	log.Printf("Mongo uri %v",uri)
+
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("Failed to load environment %v", err)
+	}
+	uri := os.Getenv("MONGO_URI")
+	log.Printf("Mongo uri %v", uri)
 	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
 	err = client.Connect(ctx)
 
@@ -32,8 +38,9 @@ func ConnectDB() *mongo.Client {
 	if err != nil {
 		log.Fatalf("Couldnt establish connection %v", err)
 	}
+	defer cancel()
 
-	fmt.Println("Connected to Database")
+	log.Println("Connected to Database")
 
 	return client
 }

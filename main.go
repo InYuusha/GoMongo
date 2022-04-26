@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-
+	"os"
 
 	"github.com/InYuusha/goMongo/api"
 	"github.com/InYuusha/goMongo/api/v1/database"
@@ -17,8 +17,8 @@ func main() {
 	}
 	//uri := os.Getenv("MONGO_URI")
 	database.ConnectDB()
-	//port := os.Getenv("PORT")
+	port := os.Getenv("PORT")
 	app := gin.Default()
 	api.ApplyRoutes(app)
-	app.Run(":" + "4000")
+	app.Run(":" + port)
 }
