@@ -23,7 +23,9 @@ services:
       - PORT=4000
       - MONGO_URI=mongodb://localhost:27017/user 
     depends_on:
-      - mongo   
+      - mongo
+    links:
+      - mongo     
 
 volumes:
   mongo-data:

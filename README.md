@@ -15,6 +15,7 @@ DELETE http://localhost:4000/api/v1/user/userId delete user
 
 
 RUN 
-$ docker-compose -f docker-compose.yaml up
-or $ go build main.go
+$ docker-compose -f docker-compose.yaml up \n
+<b>OR</b> \n 
+$ go build main.go
 $ ./main
