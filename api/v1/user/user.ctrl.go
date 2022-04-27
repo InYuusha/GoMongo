@@ -199,3 +199,32 @@ func UpdateUser(c *gin.Context) {
 		},
 	})
 }
+func DeleteUser(c*gin.Context){
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	userId := c.Param("userId")
+	defer cancel()
+
+	objId, _ := primitive.ObjectIDFromHex(userId)
+
+	result,err:= userCollection.DeleteOne(ctx,bson.M{"id":objId})
+	if err != nil {
+		log.Fatalf("Failed to get updated user %v", err)
+		c.JSON(500, response.Response{
+			Status:  500,
+			Message: "Failed at user/updateUser",
+			Data: map[string]interface{}{
+				"data": err.Error(),
+			},
+		})
+		return
+	}
+	if result.DeletedCount < 1 {
+		c.JSON(http.StatusNotFound,
+			response.Response{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "User with specified ID not found!"}},
+		)
+		return
+	}
+	c.JSON(http.StatusOK,
+		response.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "User successfully deleted!"}},
+	)
+}
