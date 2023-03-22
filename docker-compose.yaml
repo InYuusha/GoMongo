@@ -1,0 +1,31 @@
+version: "3.2"
+services:
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - "mongo-data:/data/db"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=mypass   
+
+  app:
+    build: .
+    ports:
+      - 4000:4000
+    restart: on-failure
+    volumes: 
+      - "./:/app"
+      - "/app/node_modules"
+
+    environment:
+      - PORT=4000
+      - MONGO_URI=mongodb://admin:mypass@mongo:27017/user?authSource=admin
+    depends_on:
+      - mongo
+    links:
+      - mongo     
+
+volumes:
+  mongo-data:
